@@ -74,9 +74,8 @@ module "eks" {
   cluster_name    = "hello-world-cluster"
   cluster_version = "1.27"
 
-  vpc_config = {
-    subnet_ids = module.vpc.private_subnets
-  }
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
   node_groups = {
     hello_nodes = {
