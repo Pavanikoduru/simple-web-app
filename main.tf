@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "ap-south-1"
 }
 
 module "eks" {
@@ -14,7 +14,7 @@ module "eks" {
       desired_capacity = 1
       max_capacity     = 2
       min_capacity     = 1
-      instance_type    = "t3.medium"
+      instance_type    = "t2.micro"
     }
   }
 }
