@@ -74,24 +74,21 @@ module "eks" {
   cluster_name    = "hello-world-cluster"
   cluster_version = "1.27"
 
-  vpc_id     = module.vpc.vpc_id
-  subnets    = module.vpc.private_subnets
+  vpc_config = {
+    subnet_ids = module.vpc.private_subnets
+  }
 
   node_groups = {
     hello_nodes = {
-      desired_capacity = 2
-      max_capacity     = 3
+      desired_capacity = 1
+      max_capacity     = 2
       min_capacity     = 1
       instance_type    = "t3.medium"
       iam_role_arn     = aws_iam_role.eks_node_role.arn
     }
   }
-
-  tags = {
-    Environment = "dev"
-    Project     = "hello-world"
-  }
 }
+
 
 ###################################
 # Outputs
