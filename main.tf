@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.3.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -12,9 +13,9 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-###################################
+##########################
 # Create VPC
-###################################
+##########################
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "4.0.0"
@@ -29,9 +30,9 @@ module "vpc" {
   enable_nat_gateway = true
 }
 
-###################################
-# IAM Role for EKS Worker Nodes
-###################################
+##########################
+# IAM Role for EKS Node Group
+##########################
 resource "aws_iam_role" "eks_node_role" {
   name = "eks-node-role"
 
@@ -39,11 +40,11 @@ resource "aws_iam_role" "eks_node_role" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
+        Action = "sts:AssumeRole"
       }
     ]
   })
@@ -64,9 +65,9 @@ resource "aws_iam_role_policy_attachment" "eks_registry_attach" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-###################################
+##########################
 # Create EKS Cluster
-###################################
+##########################
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.1.0"
@@ -82,16 +83,15 @@ module "eks" {
       desired_capacity = 1
       max_capacity     = 2
       min_capacity     = 1
-      instance_type    = "t3.medium"
+      instance_type    = "t3.medium" # You can switch to t3.micro if needed
       iam_role_arn     = aws_iam_role.eks_node_role.arn
     }
   }
 }
 
-
-###################################
+##########################
 # Outputs
-###################################
+##########################
 output "cluster_name" {
   value = module.eks.cluster_name
 }
